@@ -28,7 +28,7 @@ public class Url {
 	    return Jsoup.parse(html).text();
 	}
 
-	// Kommentar
+	// Kommentar 1
 	public static List<String> reviewTextToFile() throws IOException, InterruptedException {
 
 		BufferedReader br = new BufferedReader(new FileReader("src/texts/Quelltext.txt"));
