@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class Url {
 
@@ -24,37 +28,48 @@ public class Url {
 	public static List<String> reviewTexte = new ArrayList<String>();
 	
 	public static List<String> words = new ArrayList<String>();
+	
+	public static StringBuilder sb = new StringBuilder();
+	
 	public static String html2text(String html) {
 	    return Jsoup.parse(html).text();
 	}
 
 	// Kommentar 1
-	public static List<String> reviewTextToFile() throws IOException, InterruptedException {
+	public static List<String> reviewTextToFile(String s) throws IOException, InterruptedException {
 
-		BufferedReader br = new BufferedReader(new FileReader("src/texts/Quelltext.txt"));
-
-		// Review Texte ziehen
-		String string;
-		StringBuilder sb = new StringBuilder();
-		while ((string = br.readLine()) != null) {
-			if (string.contains("</span></a></span></div><div class=\"a-row review-data\"><span class=\"a-size-base review-text\">")) {
-
-				String temp1 = string.replaceAll("</div><div class=\"a-section a-spacing-extra-large a-spacing-top-medium a-text-center comment-load-error a-hidden\">.*?<span class=\"a-size-base review-text\">", "");
-				String temp2 = temp1.replaceAll("<\\/span><\\/div><div class=\"a-row a-spacing-top-small review-comments\">.*?<ul class=\"a-viewoptions-list a-viewoptions-section a-span12\">", "");
-				reviewTexte.add(temp2);
-				sb.append(html2text(temp2));
-				sb.append("\n").append("***").append("\n");
-				new Gui();
-				Gui.content = sb.toString();
-			}
-			if (!string.contains("Most helpful positive review")) {
-				// Do nothing
-			}
-			if (!string.contains("Most helpful critical review")) {
-				// Do nothing
-			}
+		System.out.println(s);
+		Document doc = Jsoup.parse(s);
+		Elements elements = doc.select("div.a-section");
+		for (Element element : elements) {
+//			reviewTexte.add(element.text());
+			sb.append(element.text());
 		}
-		br.close();
+//		Gui.content = sb.toString();
+		
+//		BufferedReader br = new BufferedReader(new FileReader("src/texts/Quelltext.txt"));
+		// Review Texte ziehen
+//		String string;
+//		StringBuilder sb = new StringBuilder();
+//		while ((string = br.readLine()) != null) {
+//			if (string.contains("</span></a></span></div><div class=\"a-row review-data\"><span class=\"a-size-base review-text\">")) {
+//
+//				String temp1 = string.replaceAll("</div><div class=\"a-section a-spacing-extra-large a-spacing-top-medium a-text-center comment-load-error a-hidden\">.*?<span class=\"a-size-base review-text\">", "");
+//				String temp2 = temp1.replaceAll("<\\/span><\\/div><div class=\"a-row a-spacing-top-small review-comments\">.*?<ul class=\"a-viewoptions-list a-viewoptions-section a-span12\">", "");
+//				reviewTexte.add(temp2);
+//				sb.append(html2text(temp2));
+//				sb.append("\n").append("***").append("\n");
+//				new Gui();
+//				Gui.content = sb.toString();
+//			}
+//			if (!string.contains("Most helpful positive review")) {
+//				// Do nothing
+//			}
+//			if (!string.contains("Most helpful critical review")) {
+//				// Do nothing
+//			}
+//		}
+//		br.close();
 		review = sb.toString();
 
 		File file = new File("src/texts/reviews.txt");

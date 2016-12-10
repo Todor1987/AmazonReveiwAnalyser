@@ -25,7 +25,7 @@ public class Konsole {
 //			Thread.sleep(500);
 		}
 	}
-	Url.reviewTextToFile();
+//	Url.reviewTextToFile();
 	Url.reviewToToken();
       
 	System.out.println("##############");

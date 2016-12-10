@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -18,6 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class Utilities {
 	
@@ -35,24 +41,74 @@ public class Utilities {
 	
 	public static void getQuelltext(String url) throws IOException, InterruptedException {
 		
-		File fileQuelltext = new File("src/texts/Quelltext.txt");
+//		File  = new File("src/texts/Quelltext.txt");
 		
-		URL website = new URL("" + url + "");
-		InputStreamReader isr = new InputStreamReader(website.openStream());
-		BufferedReader br = new BufferedReader(isr);
+//		String website = new URL("" + url + "");
 		
-		FileWriter out = new FileWriter(fileQuelltext, true);
-		BufferedWriter bw = new BufferedWriter(out);
 		
-		String inputLine;
-		while ((inputLine = br.readLine()) != null) {
-			if (!inputLine.isEmpty()) {
-				bw.append(inputLine)
-				.append("\n");
+		Elements el = Jsoup.connect(url)
+				.header("Accept-Encoding", "gzip, deflate")
+				.userAgent("Mozilla/5.0 Chrome/26.0.1410.64 Safari/537.31")
+				.timeout(600000)
+				.maxBodySize(0)
+				.followRedirects(true)
+				.get()
+				.select("div.a-section");
+		
+		List<String> list = new ArrayList<String>();
+		
+		for (Element element : el) {
+			if(element.text().contains("out of") & element.text().contains("Thank you for your feedback") & !element.text().startsWith("Customer Reviews"))
+			{
+				String[] stars = element.text().split("[0-9].[0-9] out of [0-9] stars");
+				String star = element.text().substring(0, 3);
+				list.add("\n************* " + star + " ***************************");
+				list.add("\n" + stars[1] + "\n");
 			}
 		}
-		br.close();
-		bw.close();
+		
+		for (String string : list) {
+			System.out.println(string);
+		}
+		
+//		StringBuffer sb = new StringBuffer();
+//		//FIXME: Hier muss der neue Code rein
+//		String sourcecode = Jsoup.connect(url)
+//				.header("Accept-Encoding", "gzip, deflate")
+//				.userAgent("Mozilla/5.0 Chrome/26.0.1410.64 Safari/537.31")
+//				.timeout(600000)
+//				.maxBodySize(0)
+//				.followRedirects(true)
+//				.get().html();
+//		
+//		System.out.println(sourcecode);
+		
+//		Url.reviewTextToFile(sourcecode);
+		
+		
+		
+//		PrintWriter out = new PrintWriter(fileQuelltext);
+//		out.println(sourcecode);
+//	
+//		out.close();
+//		
+//		FileWriter out = new FileWriter(fileQuelltext, true);
+//		BufferedWriter bw = new BufferedWriter(out);
+//	
+//		
+//		BufferedReader br = new BufferedReader(isr);
+//		String inputLine;
+//		while ((inputLine = br.readLine()) != null) {
+//			if (!inputLine.isEmpty()) {
+//				bw.append(inputLine)
+//				.append("\n");
+//			}
+//		}
+//		br.close();
+//		bw.close();
+		
+//		
+//		
 	}
 	
 	public static void wordOccurencies() throws IOException{
