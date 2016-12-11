@@ -26,14 +26,12 @@ public class Konsole {
 		}
 	}
 //	Url.reviewTextToFile();
-	Url.reviewToToken();
+//	Url.reviewToToken();
       
-	System.out.println("##############");
-	System.out.println("Dursuchte url's:");
-	for (String string : urlList) {
-		System.out.println(string);
-	}
-	System.out.println("##############");
-	Utilities.wordOccurencies();
+//	System.out.println("##############");
+//	System.out.println("Dursuchte url's:");
+//	for (String string : urlList) {
+//		System.out.println(string);
+//	}
 	}
 }

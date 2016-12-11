@@ -25,12 +25,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import gui.Gui;
+
 public class Utilities {
 	
 	public static List<String> buildURL(String produkt, Integer seiten) throws InterruptedException, IOException{
 
 		List<String> urlList = new ArrayList<String>();
-		
 		
 		for(int i = 1; i <= seiten; i++){
 			String string = produkt + i;
@@ -41,15 +42,10 @@ public class Utilities {
 	
 	public static void getQuelltext(String url) throws IOException, InterruptedException {
 		
-//		File  = new File("src/texts/Quelltext.txt");
-		
-//		String website = new URL("" + url + "");
-		
-		
 		Elements el = Jsoup.connect(url)
 				.header("Accept-Encoding", "gzip, deflate")
 				.userAgent("Mozilla/5.0 Chrome/26.0.1410.64 Safari/537.31")
-				.timeout(600000)
+//				.timeout(600000)
 				.maxBodySize(0)
 				.followRedirects(true)
 				.get()
@@ -60,85 +56,34 @@ public class Utilities {
 		for (Element element : el) {
 			if(element.text().contains("out of") & element.text().contains("Thank you for your feedback") & !element.text().startsWith("Customer Reviews"))
 			{
-				String[] stars = element.text().split("[0-9].[0-9] out of [0-9] stars");
+				String[] split = element.text().split("[0-9].[0-9] out of [0-9] stars");
 				String star = element.text().substring(0, 3);
 				list.add("\n************* " + star + " ***************************");
-				list.add("\n" + stars[1] + "\n");
+				list.add("\n" + split[1] + "\n\n");
 			}
 		}
-		
-		for (String string : list) {
-			System.out.println(string);
-		}
-		
-//		StringBuffer sb = new StringBuffer();
-//		//FIXME: Hier muss der neue Code rein
-//		String sourcecode = Jsoup.connect(url)
-//				.header("Accept-Encoding", "gzip, deflate")
-//				.userAgent("Mozilla/5.0 Chrome/26.0.1410.64 Safari/537.31")
-//				.timeout(600000)
-//				.maxBodySize(0)
-//				.followRedirects(true)
-//				.get().html();
-//		
-//		System.out.println(sourcecode);
-		
-//		Url.reviewTextToFile(sourcecode);
-		
-		
-		
-//		PrintWriter out = new PrintWriter(fileQuelltext);
-//		out.println(sourcecode);
-//	
-//		out.close();
-//		
-//		FileWriter out = new FileWriter(fileQuelltext, true);
-//		BufferedWriter bw = new BufferedWriter(out);
-//	
-//		
-//		BufferedReader br = new BufferedReader(isr);
-//		String inputLine;
-//		while ((inputLine = br.readLine()) != null) {
-//			if (!inputLine.isEmpty()) {
-//				bw.append(inputLine)
-//				.append("\n");
-//			}
-//		}
-//		br.close();
-//		bw.close();
-		
-//		
-//		
+		Gui.reviewList = list;
+		Url.reviewToToken(list);
 	}
 	
-	public static void wordOccurencies() throws IOException{
-		
-		BufferedReader br = new BufferedReader(new FileReader("src/texts/reviewsList.txt"));
+	public static void wordOccurencies(List<String> list) throws IOException{
 		
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-		String line;
-		while ((line = br.readLine()) != null) {
+		for (String string : list) {
 			Integer i = 1;
-			if(!map.containsKey(line)){
-				map.put(line, i);
+			if(!map.containsKey(string)){
+				map.put(string, i);
 			}
-			else if(map.containsKey(line)){
-//				int val = map.get(line);
-//				val = val + 1;
-				map.put(line, map.get(line) + 1);
-				
+			else if(map.containsKey(string)){
+				map.put(string, map.get(string) + 1);
 			}
-			
 			i++;
 		}
 		System.out.println(map.size());
 		for (String key : map.keySet()) {
-	        System.out.println(key + " " + map.get(key) + "E");
-	        
+	        System.out.println(key + " " + map.get(key));
 	    }
-		
-		
 	}
 	
 	
