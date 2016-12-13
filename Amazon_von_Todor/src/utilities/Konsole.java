@@ -12,19 +12,18 @@ public class Konsole {
 	
 	public static void control(String link, int seiten) throws InterruptedException, IOException{
 
-		String temp = link.substring(0, link.length()-1);
 		
-		List<String> urlList = utilities.Utilities.buildURL(temp, seiten );
+		List<String> urlList = utilities.Utilities.buildURL(link, seiten );
 		
 	// "B008RHGC7S"	
 	
-	if(online == true){
-		for (String string : urlList) {
-			System.out.println("Quelltext ziehen.....");
-			utilities.Utilities.getQuelltext(string);
-//			Thread.sleep(500);
-		}
-	}
+//	if(online == true){
+//		for (String string : urlList) {
+//			System.out.println("Quelltext ziehen.....");
+//			utilities.Utilities.getQuelltext(string, stein);
+////			Thread.sleep(500);
+//		}
+//	}
 //	Url.reviewTextToFile();
 //	Url.reviewToToken();
       

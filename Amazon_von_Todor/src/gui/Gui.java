@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -37,6 +38,8 @@ import javax.swing.text.Highlighter.Highlight;
 import javax.swing.text.Highlighter.HighlightPainter;
 
 import utilities.Konsole;
+import javax.swing.JSplitPane;
+import javax.swing.ScrollPaneConstants;
 
 public class Gui {
 
@@ -46,12 +49,20 @@ public class Gui {
 	public static List<String> reviewList = new ArrayList<String>();
 	public static List<String> words = new ArrayList<String>();
 	String columnNames[] = { "Column 1", "Column 2" };
+	public static Highlighter highlighterGood = null;
+	public static Highlighter highlighterBad = null;
 
 	/**
 	 * @wbp.parser.entryPoint
 	 */
 	public static void gui() throws IOException, InterruptedException {
 
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane_1.setBounds(16, 74, 747, 644);
+		
 		final JFrame f = new JFrame("Amazon Reviews");
 		f.setSize(1173, 772);
 		f.setLocation(300, 200);
@@ -88,6 +99,15 @@ public class Gui {
 		JSeparator separator = new JSeparator();
 		separator.setBounds(6, 33, 777, 12);
 		f.getContentPane().add(separator);
+		f.getContentPane().add(scrollPane_1);
+		
+		
+		final JTextArea textArea = new JTextArea();
+		scrollPane_1.setViewportView(textArea);
+		textArea.setWrapStyleWord(true);
+		textArea.setEditable(false);
+		textArea.setLineWrap(true);
+		
 		String stringGood = "";
 		int countGood = 0;
 		final String[] good = new String[2007];
@@ -108,7 +128,7 @@ public class Gui {
 		
 		// BAD WORDS
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(1041, 47, 120, 661);
+		scrollPane_2.setBounds(1026, 73, 135, 571);
 		f.getContentPane().add(scrollPane_2);
 		
 		final JList listBad = new JList(bad);
@@ -120,7 +140,7 @@ public class Gui {
 
 		// GOOD WORDS
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(890, 57, 135, 661);
+		scrollPane.setBounds(890, 73, 135, 571);
 		f.getContentPane().add(scrollPane);
 		
 		final JList listGood = new JList();
@@ -134,12 +154,7 @@ public class Gui {
 		lblNewLabel.setBounds(16, 46, 490, 16);
 		f.getContentPane().add(lblNewLabel);
 
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(16, 74, 862, 644);
-		f.getContentPane().add(scrollPane_1);
 		
-		final JTextPane textPane = new JTextPane();
-		scrollPane_1.setViewportView(textPane);
 
 		JLabel label = new JLabel("Sentiment Table");
 		label.setBackground(Color.YELLOW);
@@ -152,6 +167,22 @@ public class Gui {
 		comboBox.setBounds(994, 7, 72, 27);
 
 		f.getContentPane().add(comboBox);
+		
+		JButton btnMarkierenGood = new JButton("Markieren");
+		btnMarkierenGood.setBounds(900, 661, 117, 25);
+		f.getContentPane().add(btnMarkierenGood);
+		
+		JButton btnMarkierenBad = new JButton("Markieren");
+		btnMarkierenBad.setBounds(1032, 661, 117, 25);
+		f.getContentPane().add(btnMarkierenBad);
+		
+		JButton btnEntfernenGood = new JButton("Entfernen");
+		btnEntfernenGood.setBounds(908, 698, 117, 25);
+		f.getContentPane().add(btnEntfernenGood);
+		
+		JButton btnEntfernenBad = new JButton("Entfernen");
+		btnEntfernenBad.setBounds(1032, 693, 117, 25);
+		f.getContentPane().add(btnEntfernenBad);
 		
 		
 
@@ -169,7 +200,8 @@ public class Gui {
 				// Integer.parseInt(textField_seitenZahl.getText());
 
 				// String link = textField_urlAdress.getText();
-				String link = "https://www.amazon.com/gp/product/0385541198/ref=s9_acsd_hps_bw_c_x_3_w?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=merchandised-search-4&pf_rd_r=ZKTQN8GNZHRSBJY25237&pf_rd_r=ZKTQN8GNZHRSBJY25237&pf_rd_t=101&pf_rd_p=1877692d-9c16-4231-b349-b0a5b82d7791&pf_rd_p=1877692d-9c16-4231-b349-b0a5b82d7791&pf_rd_i=283155";
+				String link = "https://www.amazon.com/Wrong-Goodbye-Harry-Bosch-Novel/product-reviews/0316225940/ref=cm_cr_dp_see_all_summary?ie=UTF8&reviewerType=avp_only_reviews&showViewpoints=1&sortBy=helpful";
+//				String link = "http://www.thegeekstuff.com/2012/06/install-from-source";
 				try {
 					Konsole.control(link, 1); // FIXME: statischer Link und
 												// Seitenzahl
@@ -184,9 +216,20 @@ public class Gui {
 				// SENTIMENTLISTEN befüllen
 				content = "";
 				for (String string : reviewList) {
-					content += string;
+					content += string + "\n";
 				}
-				textPane.setText(content);
+//				textArea
+//				textArea_1
+				
+				textArea.setColumns(10);
+				String[] lines = content.split(System.getProperty("line.separator"));
+				for(int i = 0; i < lines.length; i++)
+				{
+					textArea.append(lines[i] + "\n");
+				}
+				
+				
+				
 				for(int i = 0; i < bad.length; i++)
 				{
 					String b = bad[i];
@@ -203,47 +246,51 @@ public class Gui {
 		});
 
 		f.setVisible(true);
+		
+		
+		
+		
 
 		// Inhalt aus Ordner Amazon/scr/texts löschen, Dateien beibehalten
-		f.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				JCheckBox deleteContent = new JCheckBox("Delete file content?");
-
-				if (JOptionPane.showConfirmDialog(f, deleteContent, "Exit?", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-
-					if (deleteContent.isSelected()) {
-						try {
-							FileOutputStream writer = new FileOutputStream("src/texts/Quelltext.txt");
-							writer.close();
-							FileOutputStream writer1 = new FileOutputStream("src/texts/reviews.txt");
-							writer1.close();
-							FileOutputStream writer2 = new FileOutputStream("src/texts/reviewsList.txt");
-							writer2.close();
-							System.exit(0);
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-
-					} else
-						System.exit(0);
-				}
-			}
-		});
+//		f.addWindowListener(new java.awt.event.WindowAdapter() {
+//			@Override
+//			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//				JCheckBox deleteContent = new JCheckBox("Delete file content?");
+//
+//				if (JOptionPane.showConfirmDialog(f, deleteContent, "Exit?", JOptionPane.YES_NO_OPTION,
+//						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+//
+//					if (deleteContent.isSelected()) {
+//						try {
+//							FileOutputStream writer = new FileOutputStream("src/texts/Quelltext.txt");
+//							writer.close();
+//							FileOutputStream writer1 = new FileOutputStream("src/texts/reviews.txt");
+//							writer1.close();
+//							FileOutputStream writer2 = new FileOutputStream("src/texts/reviewsList.txt");
+//							writer2.close();
+//							System.exit(0);
+//						} catch (FileNotFoundException e) {
+//							e.printStackTrace();
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//
+//					} else
+//						System.exit(0);
+//				}
+//			}
+//		});
 		
 		// HIGHLIGHTER GOOD
 		listGood.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				String selected = (String) listGood.getSelectedValue();
-				Highlighter highlighter = textPane.getHighlighter();
-				Document doc = textPane.getDocument();
+				highlighterGood = textArea.getHighlighter();
+				Document doc = textArea.getDocument();
 				DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
 				
-				textPane.getHighlighter().removeAllHighlights();
+				textArea.getHighlighter().removeAllHighlights();
 				
 				try {
 				    Pattern pattern = Pattern.compile(selected);
@@ -254,7 +301,7 @@ public class Gui {
 				        int start = matcher.start();
 				        int end   = matcher.end();
 				        
-						highlighter.addHighlight(start, end, highlightPainter);
+						highlighterGood.addHighlight(start, end, highlightPainter);
 				        pos = end;
 				      }
 				    }
@@ -270,11 +317,11 @@ public class Gui {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				String selected = (String) listBad.getSelectedValue();
-				Highlighter highlighter = textPane.getHighlighter();
-				Document doc = textPane.getDocument();
+				highlighterBad = textArea.getHighlighter();
+				Document doc = textArea.getDocument();
 				DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
 				
-				textPane.getHighlighter().removeAllHighlights();
+				textArea.getHighlighter().removeAllHighlights();
 				
 				try {
 				    Pattern pattern = Pattern.compile(selected);
@@ -285,7 +332,7 @@ public class Gui {
 				        int start = matcher.start();
 				        int end   = matcher.end();
 				        
-						highlighter.addHighlight(start, end, highlightPainter);
+						highlighterBad.addHighlight(start, end, highlightPainter);
 				        pos = end;
 				      }
 				    }
@@ -293,6 +340,19 @@ public class Gui {
 				} finally {
 					
 				}
+			}
+		});
+		
+		btnEntfernenGood.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textArea.getHighlighter().removeAllHighlights();
+			}
+		});
+		btnEntfernenBad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textArea.getHighlighter().removeAllHighlights();
 			}
 		});
 	}
