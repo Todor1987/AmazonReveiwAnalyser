@@ -72,8 +72,8 @@ public class Utilities {
 					.connect(nextUrl)
 					.header("Accept-Encoding", "gzip, deflate")
 					.userAgent("Mozilla/5.0")
-					.maxBodySize(0)
-					.timeout(60000)
+//					.maxBodySize(0)
+//					.timeout(60000)
 					.get();
 				
 			System.out.println(doc1);
